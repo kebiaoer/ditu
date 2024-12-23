@@ -6,6 +6,7 @@
     <title>中国地图人口热力图</title>
     <!-- 引入 ECharts -->
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.3.3/dist/echarts.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.3.3/dist/extension/bmap.min.js"></script>
     <style>
         /* 设置地图容器大小 */
         #mapContainer {
@@ -76,7 +77,7 @@
                 {
                     name: '中国人口',
                     type: 'map',
-                    mapType: 'china',
+                    mapType: 'china',  // 使用中国地图
                     roam: true,  // 允许缩放和平移
                     label: {
                         show: true,
@@ -86,6 +87,26 @@
                 }
             ]
         };
+
+        // 注册地图数据（注意需要确保地图数据已加载）
+        echarts.registerMap('china', {
+            "type": "FeatureCollection",
+            "features": [
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "name": "北京"
+                    },
+                    "geometry": {
+                        "type": "Polygon",
+                        "coordinates": [[
+                            [116.4551, 40.2539]
+                        ]]
+                    }
+                }
+                // 在这里继续添加中国地图的所有省份数据
+            ]
+        });
 
         // 使用配置项渲染地图
         chart.setOption(option);
