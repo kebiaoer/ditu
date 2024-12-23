@@ -1,60 +1,102 @@
-
 <!DOCTYPE html>
-<html style="height: 100%">
+<html lang="zh">
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>中国地图人口热力图</title>
-    <!-- 引入ECharts -->
-    <script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.3.3/echarts.min.js"></script>
-    <!-- 引入中国地图数据 -->
-    <script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.3.3/extension/dataTool.min.js"></script>
-    <script src="https://echarts.apache.org/examples/vendors/echarts/map/js/china.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.3.3/dist/echarts.min.js"></script>
+    <style>
+        #mapContainer {
+            width: 100%;
+            height: 600px;
+        }
+    </style>
 </head>
-<body style="height: 100%; margin: 0">
-    <div id="container" style="height: 100%"></div>
+<body>
+    <div id="mapContainer"></div>
 
-    <script type="text/javascript">
-        var chart = echarts.init(document.getElementById('container'));
-        
-        // 模拟的人口数据，你需要替换成实际的数据
-        var data = [
-            {name: '北京', value: 21542000},
-            {name: '上海', value: 24240000},
-            // ... 其他省份的数据
+    <script>
+        var chart = echarts.init(document.getElementById('mapContainer'));
+
+        // 示例人口数据
+        var populationData = [
+            { name: '北京', value: 21540000 },
+            { name: '天津', value: 15500000 },
+            { name: '河北', value: 75560000 },
+            { name: '山西', value: 37000000 },
+            { name: '内蒙古', value: 25000000 },
+            { name: '辽宁', value: 43590000 },
+            { name: '吉林', value: 27000000 },
+            { name: '黑龙江', value: 38000000 },
+            { name: '上海', value: 24240000 },
+            { name: '江苏', value: 80800000 },
+            { name: '浙江', value: 56450000 },
+            { name: '安徽', value: 63040000 },
+            { name: '福建', value: 39410000 },
+            { name: '江西', value: 46480000 },
+            { name: '山东', value: 101500000 },
+            { name: '河南', value: 96050000 },
+            { name: '湖北', value: 59170000 },
+            { name: '湖南', value: 68990000 },
+            { name: '广东', value: 126800000 },
+            { name: '广西', value: 49000000 },
+            { name: '海南', value: 10000000 },
+            { name: '重庆', value: 31020000 },
+            { name: '四川', value: 83000000 },
+            { name: '贵州', value: 36000000 },
+            { name: '云南', value: 48000000 },
+            { name: '西藏', value: 3000000 },
+            { name: '陕西', value: 38500000 },
+            { name: '甘肃', value: 26000000 },
+            { name: '青海', value: 6000000 },
+            { name: '宁夏', value: 6800000 },
+            { name: '新疆', value: 25000000 }
         ];
 
-        // 将数据转换为ECharts需要的格式
-        var option = {
-            tooltip: {
-                trigger: 'item',
-                formatter: '{b}<br/>{c} (p)'
-            },
-            visualMap: {
-                min: 0,
-                max: 30000000, // 假设的最大人口数
-                text: ['高', '低'],
-                realtime: false,
-                calculable: true,
-                inRange: {
-                    color: ['lightskyblue', 'yellow', 'orangered']
-                }
-            },
-            series: [
-                {
-                    name: '人口',
-                    type: 'map',
-                    mapType: 'china',
-                    roam: false,
-                    label: {
-                        show: true,
-                    },
-                    data: data
-                }
-            ]
-        };
+        // 加载中国地图 JSON 数据并注册
+        fetch('data/china.json') // 确保文件路径正确
+            .then(response => response.json())
+            .then(chinaJson => {
+                // 注册地图
+                echarts.registerMap('china', chinaJson);
 
-        // 使用刚指定的配置项和数据显示图表。
-        chart.setOption(option);
+                // 配置 ECharts 选项
+                var option = {
+                    tooltip: {
+                        trigger: 'item',
+                        formatter: '{b}<br/>人口：{c}'
+                    },
+                    visualMap: {
+                        min: 0,
+                        max: 130000000,
+                        calculable: true,
+                        inRange: {
+                            color: ['#e0ffff', '#006edd']  // 从浅蓝到深蓝的色带
+                        },
+                        text: ['高人口', '低人口'],  // 视觉映射图的文字标注
+                        show: true
+                    },
+                    series: [
+                        {
+                            name: '中国人口',
+                            type: 'map',
+                            mapType: 'china',  // 使用中国地图
+                            roam: true,  // 允许缩放和平移
+                            label: {
+                                show: true,
+                                color: '#fff'
+                            },
+                            data: populationData  // 将人口数据添加到地图上
+                        }
+                    ]
+                };
+
+                // 使用配置项渲染地图
+                chart.setOption(option);
+            })
+            .catch(error => {
+                console.error('加载地图失败:', error);
+            });
     </script>
 </body>
 </html>
